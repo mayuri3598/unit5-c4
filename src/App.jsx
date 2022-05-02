@@ -1,26 +1,16 @@
-import './App.css';
-
 import { Home } from "./components/Home";
 import { Login } from "./components/Login";
 import { Logout } from "./components/Logout";
 import { NewOrder } from "./components/NewOrder";
 import { Orders } from "./components/Orders";
 import { ProtectedRoute } from "./components/ProtextedRoute";
-import {Routes,Route,Link}from 'react-router-dom'
-
+import {Link} from "react-router-dom"
+import {Route,Routes} from "react-router-dom"
 
 function App() {
   return (
     <div className="App">
-      <div style={{
-        display:"flex",
-        justifyContent:"space-between",
-        border:"1px solid red",
-        padding:"10px",
-        fontSize:"25px",
-        margin:"10px"
-
-    }}>
+      <div>
         <Link className="nav-home" to="/">
           Home
         </Link>
@@ -34,31 +24,12 @@ function App() {
       </div>
 
       <Routes>
-
-
-<Route path='/' element={<Home />} />
-				<Route path='/login' element={<Login />} />
-				<Route path='/logout' element={<Logout />} />
-				<Route
-					path='/orders'
-					element={
-						<ProtectedRoute>
-							<Orders />
-						</ProtectedRoute>
-					}
-				/>
-				<Route
-					path='/neworder'
-					element={
-						<ProtectedRoute>
-							<NewOrder />
-						</ProtectedRoute>
-					}
-				/>
-
-
-
-
+        
+        <Route path="/" element={<Home/>}></Route>
+        <Route path="/login" element={<Login/>}></Route>
+        <Route path="/logout" element={<Logout/>}></Route>
+        <Route path="/orders" element={<ProtectedRoute><Orders/></ProtectedRoute>}></Route>
+        <Route path="/neworder" element={<NewOrder/>}></Route>
         {/* Routes are as follows:
         Route      Component
         /           Home
