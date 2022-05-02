@@ -1,49 +1,35 @@
-import { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../Redux/actions";
-import { store } from "../Redux/store";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { addUser, userAuth } from "../Redux/actions";
 
 export const Login = () => {
-   const dispatch = useDispatch();
-   const navigate = useNavigate();
-   useSelector((store) => {
-      // console.log(store);
-      return store.username;
-   });
-   const [formData, setFormData] = useState({
-      username: "",
-      password: "",
-   });
+  const [user, setUser] = useState({});
+  const [dbuser, setdbUser] = useState({});
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuth } = useSelector((store) => store);
 
-   const handleChange = (e) => {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
-   };
+  const handleLogin = (e) => {
+    e.preventDefault();
 
-   const handleSubmit = (e) => {
-      e.preventDefault();
-      axios.get("http://localhost:8080/users").then((data) => {
-         //  console.log(data.data);
-         data.data.map((e) => {
-            // console.log(e)
-            if (
-               e.username === formData.username &&
-               e.pass === formData.password
-            ) {
-               dispatch(login(e));
-               if(e.role === 'admin'){
-
-                 navigate("/orders")
-               } else{
-                 navigate("/neworder")
-               }
-            }
-         });
-         // console.log(data.data)
+    fetch(`http://localhost:8080/users?username=${user.username}`)
+      .then(
+        (res) => res.json()
+        // console.log('response:', response)
+        // handle success
+        //
+      )
+      .then((res) => {
+        // console.log("response:", res[0])
+        setdbUser(res[0]);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
       });
-   };
-
+  };
 
   return (
     <div>
@@ -52,18 +38,47 @@ export const Login = () => {
         type="text"
         name="username"
         placeholder="Enter Username"
-        onChange={handleChange}
+        onChange={(e) => {
+          setUser({ ...user, [e.target.name]: e.target.value });
+        }}
       />
       <input
         className="password"
         type="password"
         name="password"
         placeholder="Enter password"
-        onChange={handleChange}
+        onChange={(e) => {
+          setUser({ ...user, [e.target.name]: e.target.value });
+        }}
       />
       {/* On this button click make network req to find user with same username and password */}
+
       {/* get his role, if role is `admin` take him to `/orders` page otherwise take him to `/neworder` */}
-      <button className="submit" onClick={handleSubmit}>Login</button>
+      <button
+        type="submit"
+        className="submit"
+        value="Login"
+        onClick={(e) => {
+          handleLogin(e);
+          if (!dbuser) {
+            alert("user Not Found...");
+            return;
+          }
+          if (dbuser.username == user.username) {
+            if (dbuser.pass == user.password) {
+              if (dbuser.role === "admin") {
+                navigate("/orders");
+              } else {
+                navigate("/neworder");
+              }
+            }
+            dispatch(userAuth(true));
+            dispatch(addUser(dbuser));
+          }
+        }}
+      >
+        Login
+      </button>
     </div>
   );
 };
